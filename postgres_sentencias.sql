@@ -334,3 +334,27 @@ GRANT USAGE ON SCHEMA registros_bitacora TO auditor; -- Conceder acceso al esque
 GRANT SELECT ON registros_bitacora.Bitacora TO auditor; -- Conceder permisos de solo lectura a la tabla
 REVOKE INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON ALL TABLES IN SCHEMA registros_bitacora FROM auditor;
 
+
+-- Usuario Maestro
+GRANT ALL PRIVILEGES ON DATABASE proyecto_equipo1 TO Maestro;
+-- Otorgar permisos en todos los esquemas excepto "registros_bitacora"
+GRANT ALL PRIVILEGES ON SCHEMA public TO Maestro;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO Maestro;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO Maestro;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO Maestro;
+
+REVOKE ALL PRIVILEGES ON SCHEMA registros_bitacora FROM Maestro;
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA registros_bitacora FROM Maestro;
+REVOKE ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA registros_bitacora FROM Maestro;
+REVOKE ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA registros_bitacora FROM Maestro;
+
+
+-- Usuario usuario
+GRANT USAGE ON SCHEMA Contabilidad TO usuario;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA Contabilidad TO usuario;
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA Contabilidad TO usuario;
+--
+ALTER DEFAULT PRIVILEGES IN SCHEMA Contabilidad
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO usuario;
+ALTER DEFAULT PRIVILEGES IN SCHEMA Contabilidad
+GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO usuario;
