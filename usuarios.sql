@@ -2,7 +2,21 @@
 -- ==================== POSTGRESQL
 -- AUTIDOR
 -- Todo esto es para poder darle únicamente permisos de consulta al usuario administrador
-\c proyecto_equipo1;
+
+-- Usuario Maestro
+CREATE USER Maestro WITH PASSWORD 'maestro';
+GRANT ALL PRIVILEGES ON DATABASE proyecto_equipo1 TO Maestro;
+-- Otorgar permisos en todos los esquemas excepto "registros_bitacora"
+GRANT ALL PRIVILEGES ON SCHEMA public TO Maestro;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO Maestro;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO Maestro;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO Maestro;
+
+REVOKE ALL PRIVILEGES ON SCHEMA registros_bitacora FROM Maestro;
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA registros_bitacora FROM Maestro;
+REVOKE ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA registros_bitacora FROM Maestro;
+REVOKE ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA registros_bitacora FROM Maestro;
+
 CREATE USER auditor WITH PASSWORD 'auditor';
 REVOKE ALL ON SCHEMA registros_bitacora FROM auditor;
 REVOKE ALL ON ALL TABLES IN SCHEMA registros_bitacora FROM auditor;
@@ -18,14 +32,36 @@ REVOKE USAGE ON SCHEMA contabilidad FROM auditor;
 REVOKE ALL ON ALL TABLES IN SCHEMA contabilidad FROM auditor;
 
 
+-- Usuario Común
+CREATE USER usuario WITH PASSWORD 'usuario';
+GRANT USAGE ON SCHEMA Contabilidad TO usuario;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA Contabilidad TO usuario;
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA Contabilidad TO usuario;
+--
+ALTER DEFAULT PRIVILEGES IN SCHEMA Contabilidad
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO usuario;
+ALTER DEFAULT PRIVILEGES IN SCHEMA Contabilidad
+GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO usuario;
+
 
 
 -- ============= MYSQL
+-- Usuario Maestro
+CREATE USER 'Maestro'@'%' IDENTIFIED BY 'maestro';
+GRANT ALL PRIVILEGES ON contabilidad.* TO 'Maestro'@'%';
+REVOKE ALL PRIVILEGES ON contabilidad.bitacora FROM 'Maestro'@'%';
+FLUSH PRIVILEGES;
+
+-- Usuario auditor
 CREATE USER 'auditor'@'%' IDENTIFIED BY 'auditor';
 GRANT SELECT ON contabilidad.Bitacora TO 'auditor'@'localhost';
 REVOKE ALL PRIVILEGES ON *.* FROM 'auditor'@'localhost';
 FLUSH PRIVILEGES;
 SHOW GRANTS FOR 'auditor'@'localhost';
 
-
+-- Usuario Común
+CREATE USER 'usuario'@'%' IDENTIFIED BY 'usuario';
+GRANT SELECT, INSERT, UPDATE, DELETE ON contabilidad.* TO 'usuario'@'%';
+REVOKE ALL PRIVILEGES ON contabilidad.bitacora FROM 'usuario'@'localhost';
+FLUSH PRIVILEGES;
 

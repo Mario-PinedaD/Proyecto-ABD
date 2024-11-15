@@ -58,7 +58,7 @@ CREATE TABLE Movimientos (
 
 
 -- Cuenta Bitácora
-CREATE TABLE bitacora (
+CREATE TABLE Bitacora (
     id INT AUTO_INCREMENT PRIMARY KEY,
     accion VARCHAR(50),
     detalle TEXT
@@ -265,8 +265,18 @@ CREATE VIEW polizas_2010_2020_egresos AS
             AND P_tipo = 'E';
 
 
+-- Usuario Maestro
+GRANT ALL PRIVILEGES ON contabilidad.* TO 'Maestro'@'%';
+REVOKE ALL PRIVILEGES ON `contabilidad`.`bitacora` FROM 'Maestro'@'%';
+FLUSH PRIVILEGES;
+
 -- CREATE USER 'auditor'@'localhost' IDENTIFIED BY 'auditor';
 GRANT SELECT ON contabilidad.Bitacora TO 'auditor'@'%';
 REVOKE ALL PRIVILEGES ON *.* FROM 'auditor'@'%';
 FLUSH PRIVILEGES;
 SHOW GRANTS FOR 'auditor'@'%';
+
+-- usuario comun
+GRANT SELECT, INSERT, UPDATE, DELETE ON contabilidad.* TO 'usuario'@'%';
+REVOKE ALL PRIVILEGES ON contabilidad.bitacora FROM 'usuario'@'%';
+FLUSH PRIVILEGES;
